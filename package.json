@@ -6,6 +6,6 @@
         "build:dev": "esno ../src/cli.ts"
     },
     "devDependencies": {
-        "sponsorkit": "github:hm21/sponsorkit"
+        "sponsorkit": "^16.4.1"
     }
 }

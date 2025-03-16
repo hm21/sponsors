@@ -1,4 +1,5 @@
-import { defineConfig, tierPresets } from 'sponsorkit'
+import { defineConfig, Sponsorship, tierPresets } from 'sponsorkit'
+import { SPONSOR_CONFIGS } from './modified-sponsor.config';
 
 export default defineConfig({
   // includePrivate: true,
@@ -10,30 +11,21 @@ export default defineConfig({
     },
     {
       title: 'Backers',
-      // to replace the entire tier rendering
-      // compose: (composer, tierSponsors, config) => {
-      //   composer.addRaw(
-      //     '<-- custom svg -->',
-      //   )
-      // },
+      preset: tierPresets.base,
     },
     {
       title: 'Sponsors',
-      monthlyDollars: 5,
+      monthlyDollars: 25,
       preset: tierPresets.medium,
-      // to insert custom elements after the tier block
-      composeAfter: (composer, _tierSponsors, _config) => {
-        composer.addSpan(10)
-      },
     },
     {
       title: 'Silver Sponsors',
-      monthlyDollars: 25,
+      monthlyDollars: 50,
       preset: tierPresets.large,
     },
     {
       title: 'Gold Sponsors',
-      monthlyDollars: 50,
+      monthlyDollars: 100,
       preset: tierPresets.xl,
     },
   ],
@@ -42,20 +34,13 @@ export default defineConfig({
   // replaceLinks: {
   //   'https://github.com/antfu': 'https://antfu.me',
   // },
-  // replaceAvatars: {
-  //   ...
-  // },
-
-  // Automatically Merge sponsors from different platforms
-  sponsorsAutoMerge: true,
-
-  // Manually merge sponsors from different platforms
-  // mergeSponsors: [
-  //   [
-  //     { login: 'patak-dev', provider: 'github' },
-  //     { login: 'patak', provider: 'opencollective' },
-  //   ],
-  // ],
+  replaceAvatars: [(sponsor: Sponsorship) => {
+    const sponsorConfigs= SPONSOR_CONFIGS[sponsor.sponsor.login];
+    if (sponsorConfigs) {
+      return sponsorConfigs.avatarUrl;
+    }
+    return sponsor.sponsor.avatarUrl;
+  }],
 
   // Run multiple renders with different configurations
   renders: [
