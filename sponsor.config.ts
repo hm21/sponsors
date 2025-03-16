@@ -49,7 +49,7 @@ export default defineConfig({
       width: 800,
       formats: ['svg', 'png'],
     },
-    {
+   /*  {
       name: 'sponsors-wide',
       width: 1000,
       formats: ['svg'],
@@ -59,6 +59,6 @@ export default defineConfig({
       name: 'sponsors-circles',
       width: 1000,
       includePastSponsors: true,
-    },
+    }, */
   ],
 })
