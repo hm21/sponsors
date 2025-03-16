@@ -11,37 +11,43 @@ jobs:
 
     steps:
       - name: Validate Webhook Secret
+        env:
+          SPONSOR_WEBHOOK_SECRET: ${{ secrets.SPONSOR_WEBHOOK_SECRET }}
         run: |
-          if [ -z "${{ secrets.SPONSOR_WEBHOOK_SECRET }}" ]; then
+          if [ -z "$SPONSOR_WEBHOOK_SECRET" ]; then
             echo "Error: Webhook secret is missing!"
             exit 1
           fi
           echo "Webhook secret is set. Continuing execution..."
 
-      - name: Checkout your repository
-        uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4 # Updated to v4 (latest as of March 2025)
 
-      - name: Checkout custom SponsorKit
-        uses: actions/checkout@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v4 # Updated to v4
         with:
-          repository: hm21/sponsorkit
-          path: sponsorkit
+          node-version: '16' # Stick with 16 if required, but consider upgrading if possible
 
       - name: Install dependencies
-        run: |
-          cd sponsorkit
-          npm install
-          npm run build
+        run: npm install
 
-      - name: Generate Sponsors Image
-        run: |
-          cd sponsorkit
-          node bin/sponsorkit.js
+      - name: Run SponsorKit
+        run: npx sponsorkit
+        env: # Ensure SponsorKit has access to these variables
+          SPONSORKIT_GITHUB_TOKEN: ${{ secrets.SPONSORKIT_GITHUB_TOKEN }}
+          SPONSORKIT_GITHUB_LOGIN: ${{ secrets.SPONSORKIT_GITHUB_LOGIN }}
 
-      - name: Commit and Push Changes
+      - name: Commit and push changes
         run: |
-          git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add sponsors.svg
-          git commit -m "Update sponsors list" || echo "No changes to commit"
-          git push
+          git config --global user.name "GitHub Actions"
+          git add .
+          # Check for changes before committing
+          if ! git diff --staged --quiet; then
+            git commit -m "Update sponsors [skip ci]"
+            git push
+          else
+            echo "No changes to commit"
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # For pushing to the repo
