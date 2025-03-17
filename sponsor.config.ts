@@ -28,6 +28,11 @@ export default defineConfig({
       monthlyDollars: 100,
       preset: tierPresets.xl,
     },
+    {
+      title: 'Platinum Sponsors',
+      monthlyDollars: 1000,
+      preset: tierPresets.xl,
+    },
   ],
 
   // Replace links and avatars
